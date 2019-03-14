@@ -3,6 +3,8 @@
 __author__ = "jayaimzzz"
 
 import requests
+import turtle
+import time
 
 def obtain_astronauts():
     try:
@@ -21,14 +23,37 @@ def obtain_geo_coordinates():
         timestamp = data["timestamp"]
         latitude = data["iss_position"]["latitude"]
         longitude = data["iss_position"]["longitude"]
-        return (timestamp, latitude, longitude)
+        result = (timestamp, float(longitude), float(latitude))
+        return result
     except requests.exceptions.RequestException as err:
         print err
 
+
+
+def create_graphic_screen():
+    wn = turtle.Screen()
+    wn.setup(width=720, height=360)
+    wn.bgpic("map.gif")
+    iss_image = "iss.gif"
+    wn.setworldcoordinates(-180,-90,180,90)
+    wn.register_shape(iss_image)
+    iss = turtle.Turtle()
+    iss.shape(iss_image)
+    iss.penup()
+    poll = True
+    while poll:
+        geo_coordinates = obtain_geo_coordinates()
+        longitude = geo_coordinates[1]
+        latitude = geo_coordinates[2]
+        iss.goto(geo_coordinates[1],geo_coordinates[2])
+        print (longitude, latitude)
+        time.sleep(5)
+        # wn.exitonclick()
+
+
 def main():
     obtain_astronauts()
-    geo_coordinates = obtain_geo_coordinates()
-    print geo_coordinates
+    create_graphic_screen()
     
 
 if __name__ == '__main__':
